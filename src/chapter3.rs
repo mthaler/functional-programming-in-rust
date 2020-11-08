@@ -11,8 +11,23 @@ impl<T> List<T> {
         List::Nil
     }
 
+    fn from(elems: Vec<T>) -> List<T> {
+        let mut l = List::new();
+        for elem in elems {
+            l = l.append(elem);
+        }
+        l
+    }
+
     fn append(self, item: T) -> Self {
         List::Cons(item, Box::new(self))
+    }
+
+    fn tail(self) -> Self {
+        match self {
+            List::Nil => List::Nil,
+            List::Cons(_, tail) => *tail,
+        }
     }
 }
 
@@ -60,10 +75,15 @@ mod tests {
 
     #[test]
     fn test_product() {
-        let mut l = List::new();
-        l = l.append(2);
-        l = l.append(3);
-        l = l.append(4);   
+        let l = List::from(vec![1, 2, 3, 4]);
         assert_eq!(l.product(), 24);
+    }
+
+    #[test]
+    fn test_tail() {
+        let l = List::from(vec![1, 2, 3, 4]);
+        assert_eq!(format!("{}", l), "[4 3 2 1 ]");
+        let tail = l.tail();
+        assert_eq!(format!("{}", tail), "[3 2 1 ]");
     }
 }
