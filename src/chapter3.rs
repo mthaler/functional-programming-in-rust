@@ -52,6 +52,19 @@ impl<T> List<T> {
     }
 }
 
+impl<T: Copy> List<T> {
+    fn drop_while<P>(self, p: P) -> Self where P: Fn(T) -> bool {
+        match self {
+            List::Nil => self,
+            List::Cons(h, t) => if p(h) {
+                t.drop_while(p)
+            } else {
+                List::Cons(h, t)
+            }
+        }
+    }
+}
+
 impl<T> fmt::Display for List<T> where T: fmt::Display {
     
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -121,6 +134,14 @@ mod tests {
         let l = List::from(vec![1, 2, 3, 4, 5, 6]);
         assert_eq!(format!("{}", l), "[6 5 4 3 2 1 ]");
         let l2 = l.drop(2);
+        assert_eq!(format!("{}", l2), "[4 3 2 1 ]");
+    }
+
+    #[test]
+    fn test_is_drop_while() {
+        let l = List::from(vec![1, 2, 3, 4, 5, 6]);
+        assert_eq!(format!("{}", l), "[6 5 4 3 2 1 ]");
+        let l2 = l.drop_while(|x| x > 4);
         assert_eq!(format!("{}", l2), "[4 3 2 1 ]");
     }
 }
