@@ -29,6 +29,27 @@ impl<T> List<T> {
             List::Cons(_, tail) => *tail,
         }
     }
+
+    fn is_empty(&self) -> bool {
+        match self {
+            List::Nil => true,
+            List::Cons(_, _) => false
+        }
+    }
+
+    fn drop(self, n: i32) -> Self {
+        if n <= 0 {
+            self
+        } else {
+            let mut i = 1;
+            let mut t = self.tail();
+            while !t.is_empty() && i < n {
+                t = t.tail();
+                i += 1;
+            }
+            t
+        }
+    }
 }
 
 impl<T> fmt::Display for List<T> where T: fmt::Display {
@@ -85,5 +106,21 @@ mod tests {
         assert_eq!(format!("{}", l), "[4 3 2 1 ]");
         let tail = l.tail();
         assert_eq!(format!("{}", tail), "[3 2 1 ]");
+    }
+
+    #[test]
+    fn test_is_empty() {
+        let l0: List<i32> = List::new();
+        assert!(l0.is_empty());
+        let l1 = List::from(vec![1, 2, 3, 4]);
+        assert!(!l1.is_empty());
+    }
+
+    #[test]
+    fn test_is_drop() {
+        let l = List::from(vec![1, 2, 3, 4, 5, 6]);
+        assert_eq!(format!("{}", l), "[6 5 4 3 2 1 ]");
+        let l2 = l.drop(2);
+        assert_eq!(format!("{}", l2), "[4 3 2 1 ]");
     }
 }
