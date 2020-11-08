@@ -6,9 +6,13 @@ fn factorial(n: i64) -> i64 {
     go(n, 1)
 }
 
+fn format_result<F>(name: &str, n: i64, f: F) -> String where F: Fn(i64) -> i64 {
+    format!("The {} of {} is {}", name, n, f(n))
+}
+
 #[cfg(test)]
 mod tests {
-    use super::factorial;
+    use super::{factorial, format_result};
 
     #[test]
     fn test_factorial() {
@@ -18,5 +22,10 @@ mod tests {
         assert_eq!(factorial(3), 6);
         assert_eq!(factorial(4), 24);
         assert_eq!(factorial(5), 120);
+    }
+
+    #[test]
+    fn test_format_result() {
+        assert_eq!(format_result("factorial", 5, factorial), "The factorial of 5 is 120");
     }
 }
